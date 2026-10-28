@@ -5,7 +5,7 @@ import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import {
   LayoutDashboard, Package, Tag, List, ClipboardList,
-  CalendarHeart, Settings, LogOut, ChevronRight, Bell,
+  CalendarHeart, Settings, LogOut, ChevronRight, Bell, BookOpen,
 } from "lucide-react";
 
 const navItems = [
@@ -15,6 +15,7 @@ const navItems = [
   { href: "/categories", icon: Tag, label: "Categories" },
   { href: "/logs", icon: ClipboardList, label: "Usage Logs" },
   { href: "/events", icon: CalendarHeart, label: "Events" },
+  { href: "/instructions", icon: BookOpen, label: "Instructions" },
 ];
 
 const adminItems = [
