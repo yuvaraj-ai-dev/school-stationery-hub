@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ItemVariant, Item, Category } from "@/types";
 import { getStockStatusColor, getStockStatusText, getStockStatusDot, formatDateTime } from "@/lib/utils";
 import toast from "react-hot-toast";
-import { Search, Plus, ArrowUp, ArrowDown, Edit2, Trash2, ChevronDown, ChevronRight } from "lucide-react";
+import { Search, Plus, ArrowUp, ArrowDown, Edit2, Trash2, ChevronDown, ChevronRight, X } from "lucide-react";
 
 interface GroupedItem {
   item: Item;
@@ -30,7 +30,7 @@ export default function StockPage() {
     fetchAll();
     // Get role from session
     fetch("/api/auth/session").then(r => r.json()).then(s => setRole(s?.user?.role || "teacher"));
-    fetch("/api/events").then(r => r.json()).then(setEvents).catch(() => {});
+    fetch("/api/events").then(r => r.json()).then(setEvents).catch(() => { });
   }, []);
 
   async function fetchAll() {
@@ -161,8 +161,8 @@ export default function StockPage() {
                   }}>
                     {category.icon}
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                       <span style={{ fontWeight: 700, fontSize: 15, color: "var(--text-primary)" }}>{item.name}</span>
                       <span className="tag tag-blue">{category.name}</span>
                       {hasOut && <span className="tag tag-red">Out of Stock</span>}
@@ -177,79 +177,150 @@ export default function StockPage() {
                   </div>
                 </div>
 
-                {/* Variants table */}
+                {/* Variants view: Desktop Table + Mobile Cards */}
                 {isExpanded && (
-                  <div style={{ borderTop: "1px solid var(--border)", padding: "0 20px 16px" }}>
-                    <table className="data-table" style={{ marginTop: 12 }}>
-                      <thead>
-                        <tr>
-                          <th>Variant</th>
-                          <th>Color</th>
-                          <th>Size</th>
-                          <th>Type/Grade</th>
-                          <th>Brand</th>
-                          <th>Stock</th>
-                          <th>Status</th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {itemVariants.length === 0 ? (
-                          <tr><td colSpan={8} style={{ textAlign: "center", color: "var(--text-muted)" }}>No variants yet</td></tr>
-                        ) : itemVariants.map(variant => {
-                          const statusColor = getStockStatusColor(variant.current_stock, variant.min_threshold);
-                          const statusText = getStockStatusText(variant.current_stock, variant.min_threshold);
-                          const dotColor = getStockStatusDot(variant.current_stock, variant.min_threshold);
-                          const pct = variant.min_threshold > 0
-                            ? Math.min(100, (variant.current_stock / (variant.min_threshold * 3)) * 100) : 100;
+                  <div style={{ borderTop: "1px solid var(--border)", padding: "12px 14px 16px" }}>
+                    {itemVariants.length === 0 ? (
+                      <div style={{ textAlign: "center", padding: "16px 0", color: "var(--text-muted)", fontSize: 13 }}>No variants yet</div>
+                    ) : (
+                      <>
+                        {/* Desktop Table View */}
+                        <div className="desktop-table table-responsive">
+                          <table className="data-table" style={{ marginTop: 4, minWidth: 620 }}>
+                            <thead>
+                              <tr>
+                                <th>Variant</th>
+                                <th>Color</th>
+                                <th>Size</th>
+                                <th>Type/Grade</th>
+                                <th>Brand</th>
+                                <th>Stock</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {itemVariants.map(variant => {
+                                const statusColor = getStockStatusColor(variant.current_stock, variant.min_threshold);
+                                const statusText = getStockStatusText(variant.current_stock, variant.min_threshold);
+                                const dotColor = getStockStatusDot(variant.current_stock, variant.min_threshold);
+                                const pct = variant.min_threshold > 0
+                                  ? Math.min(100, (variant.current_stock / (variant.min_threshold * 3)) * 100) : 100;
 
-                          return (
-                            <tr key={variant.id}>
-                              <td style={{ fontWeight: 600, color: "var(--text-primary)" }}>{variant.variant_label}</td>
-                              <td>{variant.color || "-"}</td>
-                              <td>{variant.size || "-"}</td>
-                              <td>{variant.type || variant.grade || "-"}</td>
-                              <td>{variant.brand || "-"}</td>
-                              <td>
-                                <div style={{ minWidth: 80 }}>
-                                  <div style={{ fontWeight: 700, color: "var(--text-primary)", marginBottom: 4 }}>
-                                    {variant.current_stock} <span style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 400 }}>{item.unit}</span>
+                                return (
+                                  <tr key={variant.id}>
+                                    <td style={{ fontWeight: 600, color: "var(--text-primary)" }}>{variant.variant_label}</td>
+                                    <td>{variant.color || "-"}</td>
+                                    <td>{variant.size || "-"}</td>
+                                    <td>{variant.type || variant.grade || "-"}</td>
+                                    <td>{variant.brand || "-"}</td>
+                                    <td>
+                                      <div style={{ minWidth: 80 }}>
+                                        <div style={{ fontWeight: 700, color: "var(--text-primary)", marginBottom: 4 }}>
+                                          {variant.current_stock} <span style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 400 }}>{item.unit}</span>
+                                        </div>
+                                        <div className="stock-bar" style={{ width: 80 }}>
+                                          <div className="stock-bar-fill" style={{
+                                            width: `${pct}%`,
+                                            background: variant.current_stock === 0 ? "#f87171" : variant.current_stock <= variant.min_threshold ? "#fbbf24" : "var(--gradient-1)",
+                                          }} />
+                                        </div>
+                                      </div>
+                                    </td>
+                                    <td>
+                                      <span className={`stat-badge ${variant.current_stock === 0 ? "out" : variant.current_stock <= variant.min_threshold ? "low" : "good"}`}>
+                                        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "currentColor", display: "inline-block" }} />
+                                        {statusText}
+                                      </span>
+                                    </td>
+                                    <td>
+                                      <div style={{ display: "flex", gap: 8 }}>
+                                        <button
+                                          className="btn-success"
+                                          style={{ padding: "6px 12px", fontSize: 12 }}
+                                          onClick={() => { setModal({ type: "add", variant, item }); setTxForm({ quantity: "", event: "", notes: "" }); }}
+                                        >
+                                          <ArrowUp size={13} /> Add
+                                        </button>
+                                        <button
+                                          className="btn-warning"
+                                          style={{ padding: "6px 12px", fontSize: 12 }}
+                                          onClick={() => { setModal({ type: "use", variant, item }); setTxForm({ quantity: "", event: "", notes: "" }); }}
+                                        >
+                                          <ArrowDown size={13} /> Use
+                                        </button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+
+                        {/* Mobile Vertical Cards View */}
+                        <div className="mobile-card-list">
+                          {itemVariants.map(variant => {
+                            const statusText = getStockStatusText(variant.current_stock, variant.min_threshold);
+                            return (
+                              <div
+                                key={variant.id}
+                                style={{
+                                  background: "var(--bg-secondary)",
+                                  border: "1px solid var(--border)",
+                                  borderRadius: 14,
+                                  padding: "14px",
+                                }}
+                              >
+                                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 8, gap: 10 }}>
+                                  <div style={{ flex: 1, minWidth: 0 }}>
+                                    <div style={{ fontWeight: 700, fontSize: 15, color: "var(--text-primary)" }}>
+                                      {variant.variant_label}
+                                    </div>
+                                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 4, fontSize: 12, color: "var(--text-muted)" }}>
+                                      {variant.color && <span>Color: <strong style={{ color: "var(--text-secondary)" }}>{variant.color}</strong></span>}
+                                      {variant.size && <span>• Size: <strong style={{ color: "var(--text-secondary)" }}>{variant.size}</strong></span>}
+                                      {(variant.type || variant.grade) && <span>• {variant.type || variant.grade}</span>}
+                                      {variant.brand && <span>• Brand: <strong style={{ color: "var(--text-secondary)" }}>{variant.brand}</strong></span>}
+                                    </div>
                                   </div>
-                                  <div className="stock-bar" style={{ width: 80 }}>
-                                    <div className="stock-bar-fill" style={{
-                                      width: `${pct}%`,
-                                      background: variant.current_stock === 0 ? "#f87171" : variant.current_stock <= variant.min_threshold ? "#fbbf24" : "var(--gradient-1)",
-                                    }} />
+                                  <span className={`stat-badge ${variant.current_stock === 0 ? "out" : variant.current_stock <= variant.min_threshold ? "low" : "good"}`} style={{ flexShrink: 0 }}>
+                                    {statusText}
+                                  </span>
+                                </div>
+
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, paddingTop: 8, borderTop: "1px dashed var(--border)" }}>
+                                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text-primary)" }}>
+                                    Current Stock: <span style={{ color: variant.current_stock === 0 ? "var(--accent-red)" : variant.current_stock <= variant.min_threshold ? "var(--accent-amber)" : "var(--accent-emerald)" }}>{variant.current_stock} {item.unit}</span>
+                                  </div>
+                                  <div style={{ fontSize: 11, color: "var(--text-muted)" }}>
+                                    Alert: &lt;{variant.min_threshold}
                                   </div>
                                 </div>
-                              </td>
-                              <td>
-                                <span className={`stat-badge ${variant.current_stock === 0 ? "out" : variant.current_stock <= variant.min_threshold ? "low" : "good"}`}>
-                                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: "currentColor", display: "inline-block" }} />
-                                  {statusText}
-                                </span>
-                              </td>
-                              <td>
-                                <div style={{ display: "flex", gap: 8 }}>
+
+                                {/* Touch action buttons */}
+                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                                   <button
                                     className="btn-success"
+                                    style={{ padding: "10px", fontSize: 13, fontWeight: 600, justifyContent: "center", minHeight: 42 }}
                                     onClick={() => { setModal({ type: "add", variant, item }); setTxForm({ quantity: "", event: "", notes: "" }); }}
                                   >
-                                    <ArrowUp size={13} /> Add
+                                    <ArrowUp size={15} /> Add Stock
                                   </button>
                                   <button
                                     className="btn-warning"
+                                    style={{ padding: "10px", fontSize: 13, fontWeight: 600, justifyContent: "center", minHeight: 42 }}
                                     onClick={() => { setModal({ type: "use", variant, item }); setTxForm({ quantity: "", event: "", notes: "" }); }}
                                   >
-                                    <ArrowDown size={13} /> Use
+                                    <ArrowDown size={15} /> Use Stock
                                   </button>
                                 </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </>
+                    )}
                   </div>
                 )}
               </div>
@@ -262,12 +333,19 @@ export default function StockPage() {
       {modal && (
         <div className="modal-overlay" onClick={() => setModal(null)}>
           <div className="modal-box" onClick={e => e.stopPropagation()}>
-            <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 18, fontWeight: 700, marginBottom: 4 }}>
-              {modal.type === "add" ? "➕ Add Stock" : "📤 Log Usage"}
-            </h2>
-            <p style={{ color: "var(--text-muted)", fontSize: 13, marginBottom: 24 }}>
-              {modal.item.name} · <strong style={{ color: "var(--text-secondary)" }}>{modal.variant.variant_label}</strong>
-            </p>
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 12 }}>
+              <div>
+                <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 18, fontWeight: 700 }}>
+                  {modal.type === "add" ? "➕ Add Stock" : "📤 Log Usage"}
+                </h2>
+                <p style={{ color: "var(--text-muted)", fontSize: 13, marginTop: 2 }}>
+                  {modal.item.name} · <strong style={{ color: "var(--text-secondary)" }}>{modal.variant.variant_label}</strong>
+                </p>
+              </div>
+              <button onClick={() => setModal(null)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer", padding: 4 }}>
+                <X size={20} />
+              </button>
+            </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div style={{
@@ -314,13 +392,13 @@ export default function StockPage() {
                 />
               </div>
 
-              <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
-                <button className="btn-secondary" onClick={() => setModal(null)} style={{ flex: 1 }}>Cancel</button>
+              <div style={{ display: "flex", gap: 12, marginTop: 12, paddingBottom: 8 }}>
+                <button className="btn-secondary" onClick={() => setModal(null)} style={{ flex: 1, minHeight: 44, justifyContent: "center" }}>Cancel</button>
                 <button
                   className="btn-primary"
                   onClick={handleTransaction}
                   disabled={txLoading}
-                  style={{ flex: 2 }}
+                  style={{ flex: 2, minHeight: 44, justifyContent: "center" }}
                 >
                   {txLoading ? <div className="spinner" /> : modal.type === "add" ? "Add Stock" : "Log Usage"}
                 </button>

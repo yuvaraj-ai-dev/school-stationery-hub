@@ -129,66 +129,68 @@ export default function SettingsPage() {
             <div className="empty-state-desc">Users will appear here after they first log in with Google.</div>
           </div>
         ) : (
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>User</th>
-                <th>Email</th>
-                <th>Current Role</th>
-                <th>Last Login</th>
-                <th>Change Role</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map(user => (
-                <tr key={user.email}>
-                  <td>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      <div style={{
-                        width: 34, height: 34, borderRadius: "50%",
-                        background: "var(--gradient-1)",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        fontSize: 14, fontWeight: 700, color: "white",
-                      }}>
-                        {user.name[0]}
-                      </div>
-                      <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>{user.name}</span>
-                    </div>
-                  </td>
-                  <td style={{ fontSize: 13 }}>{user.email}</td>
-                  <td>
-                    <span style={{
-                      padding: "3px 10px", borderRadius: 99, fontSize: 11, fontWeight: 600,
-                      background: user.role === "admin" ? "rgba(108,143,255,0.15)" : "rgba(52,211,153,0.12)",
-                      color: user.role === "admin" ? "var(--accent-primary)" : "var(--accent-emerald)",
-                      textTransform: "uppercase", letterSpacing: "0.05em",
-                    }}>
-                      {user.role === "admin" ? "🔑 Admin" : "👩‍🏫 Teacher"}
-                    </span>
-                  </td>
-                  <td style={{ fontSize: 12, color: "var(--text-muted)" }}>{user.last_login ? formatDateTime(user.last_login) : "Never"}</td>
-                  <td>
-                    {user.email === session?.user?.email ? (
-                      <span style={{ fontSize: 12, color: "var(--text-muted)", fontStyle: "italic" }}>That&apos;s you</span>
-                    ) : (
-                      <div style={{ display: "flex", gap: 8 }}>
-                        <button
-                          className={user.role === "admin" ? "btn-warning" : "btn-primary"}
-                          style={{ padding: "6px 12px", fontSize: 12 }}
-                          disabled={saving === user.email}
-                          onClick={() => updateRole(user.email, user.role === "admin" ? "teacher" : "admin")}
-                        >
-                          {saving === user.email ? <div className="spinner" style={{ width: 14, height: 14 }} /> : (
-                            user.role === "admin" ? "Demote to Teacher" : "Promote to Admin"
-                          )}
-                        </button>
-                      </div>
-                    )}
-                  </td>
+          <div className="table-responsive">
+            <table className="data-table" style={{ minWidth: 520 }}>
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Email</th>
+                  <th>Current Role</th>
+                  <th>Last Login</th>
+                  <th>Change Role</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {users.map(user => (
+                  <tr key={user.email}>
+                    <td>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <div style={{
+                          width: 34, height: 34, borderRadius: "50%",
+                          background: "var(--gradient-1)",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          fontSize: 14, fontWeight: 700, color: "white",
+                        }}>
+                          {user.name[0]}
+                        </div>
+                        <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>{user.name}</span>
+                      </div>
+                    </td>
+                    <td style={{ fontSize: 13 }}>{user.email}</td>
+                    <td>
+                      <span style={{
+                        padding: "3px 10px", borderRadius: 99, fontSize: 11, fontWeight: 600,
+                        background: user.role === "admin" ? "rgba(108,143,255,0.15)" : "rgba(52,211,153,0.12)",
+                        color: user.role === "admin" ? "var(--accent-primary)" : "var(--accent-emerald)",
+                        textTransform: "uppercase", letterSpacing: "0.05em",
+                      }}>
+                        {user.role === "admin" ? "🔑 Admin" : "👩‍🏫 Teacher"}
+                      </span>
+                    </td>
+                    <td style={{ fontSize: 12, color: "var(--text-muted)" }}>{user.last_login ? formatDateTime(user.last_login) : "Never"}</td>
+                    <td>
+                      {user.email === session?.user?.email ? (
+                        <span style={{ fontSize: 12, color: "var(--text-muted)", fontStyle: "italic" }}>That&apos;s you</span>
+                      ) : (
+                        <div style={{ display: "flex", gap: 8 }}>
+                          <button
+                            className={user.role === "admin" ? "btn-warning" : "btn-primary"}
+                            style={{ padding: "6px 12px", fontSize: 12 }}
+                            disabled={saving === user.email}
+                            onClick={() => updateRole(user.email, user.role === "admin" ? "teacher" : "admin")}
+                          >
+                            {saving === user.email ? <div className="spinner" style={{ width: 14, height: 14 }} /> : (
+                              user.role === "admin" ? "Demote to Teacher" : "Promote to Admin"
+                            )}
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 

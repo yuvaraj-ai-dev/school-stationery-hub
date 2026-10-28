@@ -161,81 +161,165 @@ export default function ItemsPage() {
 
             return (
               <div key={item.id} className="glass-card">
-                <div style={{ padding: "16px 20px", display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }} onClick={() => toggleExpand(item.id)}>
-                  <div style={{ fontSize: 22 }}>{cat?.icon || "📦"}</div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span style={{ fontWeight: 700, fontSize: 15, color: "var(--text-primary)" }}>{item.name}</span>
-                      <span className="tag tag-blue">{cat?.name || "Unknown"}</span>
-                      <span className="tag tag-purple">{item.unit}</span>
+                <div className="item-card-header" onClick={() => toggleExpand(item.id)}>
+                  <div className="item-card-info">
+                    <div style={{ fontSize: 24, flexShrink: 0 }}>{cat?.icon || "📦"}</div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                        <span style={{ fontWeight: 700, fontSize: 15, color: "var(--text-primary)" }}>{item.name}</span>
+                        <span className="tag tag-blue">{cat?.name || "Unknown"}</span>
+                        <span className="tag tag-purple">{item.unit}</span>
+                      </div>
+                      <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 2 }}>
+                        {itemVariants.length} variant{itemVariants.length !== 1 ? "s" : ""}
+                        {item.variant_config.length > 0 && ` · Tracks: ${item.variant_config.join(", ")}`}
+                      </div>
                     </div>
-                    <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 2 }}>
-                      {itemVariants.length} variant{itemVariants.length !== 1 ? "s" : ""}
-                      {item.variant_config.length > 0 && ` · Tracks: ${item.variant_config.join(", ")}`}
+                    <div style={{ color: "var(--text-muted)", display: "flex", alignItems: "center", marginLeft: "auto" }}>
+                      {isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
                     </div>
                   </div>
-                  <div style={{ display: "flex", gap: 8 }} onClick={e => e.stopPropagation()}>
-                    <button className="btn-secondary" style={{ padding: "6px 10px" }} onClick={() => {
-                      setItemForm({ category_id: item.category_id, name: item.name, unit: item.unit, has_variants: item.has_variants, variant_config: item.variant_config });
-                      setItemModal({ mode: "edit", item });
-                    }}><Edit2 size={14} /></button>
+
+                  <div className="item-card-actions" onClick={e => e.stopPropagation()}>
+                    <button
+                      className="btn-secondary"
+                      style={{ padding: "7px 11px" }}
+                      title="Edit Item"
+                      onClick={() => {
+                        setItemForm({ category_id: item.category_id, name: item.name, unit: item.unit, has_variants: item.has_variants, variant_config: item.variant_config });
+                        setItemModal({ mode: "edit", item });
+                      }}
+                    >
+                      <Edit2 size={14} />
+                    </button>
                     {role === "admin" && (
-                      <button className="btn-danger" style={{ padding: "6px 10px" }} onClick={() => setDeleteConfirm({ type: "item", id: item.id })}><Trash2 size={14} /></button>
+                      <button
+                        className="btn-danger"
+                        style={{ padding: "7px 11px" }}
+                        title="Delete Item"
+                        onClick={() => setDeleteConfirm({ type: "item", id: item.id })}
+                      >
+                        <Trash2 size={14} />
+                      </button>
                     )}
-                    <button className="btn-primary" style={{ padding: "6px 12px", fontSize: 12 }} onClick={() => {
-                      setVariantForm({ variant_label: "", color: "", size: "", type: "", grade: "", brand: "", pack_size: "", current_stock: "", min_threshold: "5" });
-                      setVariantModal({ mode: "add", item });
-                    }}>
-                      <Plus size={13} /> Variant
+                    <button
+                      className="btn-primary"
+                      style={{ padding: "7px 14px", fontSize: 13, fontWeight: 600 }}
+                      onClick={() => {
+                        setVariantForm({ variant_label: "", color: "", size: "", type: "", grade: "", brand: "", pack_size: "", current_stock: "", min_threshold: "5" });
+                        setVariantModal({ mode: "add", item });
+                      }}
+                    >
+                      <Plus size={15} /> Add Variant
                     </button>
                   </div>
-                  {isExpanded ? <ChevronDown size={16} style={{ color: "var(--text-muted)" }} /> : <ChevronRight size={16} style={{ color: "var(--text-muted)" }} />}
                 </div>
 
                 {isExpanded && itemVariants.length > 0 && (
-                  <div style={{ borderTop: "1px solid var(--border)", padding: "8px 20px 16px" }}>
-                    <table className="data-table">
-                      <thead>
-                        <tr>
-                          <th>Variant Label</th>
-                          <th>Color</th>
-                          <th>Size</th>
-                          <th>Type/Grade</th>
-                          <th>Brand</th>
-                          <th>Pack</th>
-                          <th>Stock</th>
-                          <th>Min Alert</th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {itemVariants.map(v => (
-                          <tr key={v.id}>
-                            <td style={{ fontWeight: 600, color: "var(--text-primary)" }}>{v.variant_label}</td>
-                            <td>{v.color || "-"}</td>
-                            <td>{v.size || "-"}</td>
-                            <td>{v.type || v.grade || "-"}</td>
-                            <td>{v.brand || "-"}</td>
-                            <td>{v.pack_size || "-"}</td>
-                            <td style={{ fontWeight: 700, color: v.current_stock === 0 ? "var(--accent-red)" : v.current_stock <= v.min_threshold ? "var(--accent-amber)" : "var(--accent-emerald)" }}>
-                              {v.current_stock} {item.unit}
-                            </td>
-                            <td style={{ color: "var(--text-muted)" }}>{v.min_threshold}</td>
-                            <td>
-                              <div style={{ display: "flex", gap: 6 }}>
-                                <button className="btn-secondary" style={{ padding: "5px 8px" }} onClick={() => {
+                  <div style={{ borderTop: "1px solid var(--border)", padding: "12px 14px 16px" }}>
+                    {/* Desktop Table View */}
+                    <div className="desktop-table table-responsive">
+                      <table className="data-table" style={{ minWidth: 640 }}>
+                        <thead>
+                          <tr>
+                            <th>Variant Label</th>
+                            <th>Color</th>
+                            <th>Size</th>
+                            <th>Type/Grade</th>
+                            <th>Brand</th>
+                            <th>Pack</th>
+                            <th>Stock</th>
+                            <th>Min Alert</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {itemVariants.map(v => (
+                            <tr key={v.id}>
+                              <td style={{ fontWeight: 600, color: "var(--text-primary)" }}>{v.variant_label}</td>
+                              <td>{v.color || "-"}</td>
+                              <td>{v.size || "-"}</td>
+                              <td>{v.type || v.grade || "-"}</td>
+                              <td>{v.brand || "-"}</td>
+                              <td>{v.pack_size || "-"}</td>
+                              <td style={{ fontWeight: 700, color: v.current_stock === 0 ? "var(--accent-red)" : v.current_stock <= v.min_threshold ? "var(--accent-amber)" : "var(--accent-emerald)" }}>
+                                {v.current_stock} {item.unit}
+                              </td>
+                              <td style={{ color: "var(--text-muted)" }}>{v.min_threshold}</td>
+                              <td>
+                                <div style={{ display: "flex", gap: 6 }}>
+                                  <button className="btn-secondary" style={{ padding: "5px 8px" }} onClick={() => {
+                                    setVariantForm({ variant_label: v.variant_label, color: v.color || "", size: v.size || "", type: v.type || "", grade: v.grade || "", brand: v.brand || "", pack_size: v.pack_size || "", current_stock: String(v.current_stock), min_threshold: String(v.min_threshold) });
+                                    setVariantModal({ mode: "edit", item, variant: v });
+                                  }}><Edit2 size={13} /></button>
+                                  {role === "admin" && (
+                                    <button className="btn-danger" style={{ padding: "5px 8px" }} onClick={() => setDeleteConfirm({ type: "variant", id: v.id })}><Trash2 size={13} /></button>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Mobile Vertical Cards View */}
+                    <div className="mobile-card-list">
+                      {itemVariants.map(v => (
+                        <div
+                          key={v.id}
+                          style={{
+                            background: "var(--bg-secondary)",
+                            border: "1px solid var(--border)",
+                            borderRadius: 14,
+                            padding: "14px",
+                          }}
+                        >
+                          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 6, gap: 10 }}>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ fontWeight: 700, fontSize: 15, color: "var(--text-primary)" }}>{v.variant_label}</div>
+                              <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 4, fontSize: 12, color: "var(--text-muted)" }}>
+                                {v.color && <span>Color: <strong style={{ color: "var(--text-secondary)" }}>{v.color}</strong></span>}
+                                {v.size && <span>• Size: <strong style={{ color: "var(--text-secondary)" }}>{v.size}</strong></span>}
+                                {(v.type || v.grade) && <span>• {v.type || v.grade}</span>}
+                                {v.brand && <span>• Brand: <strong style={{ color: "var(--text-secondary)" }}>{v.brand}</strong></span>}
+                                {v.pack_size && <span>• Pack: <strong style={{ color: "var(--text-secondary)" }}>{v.pack_size}</strong></span>}
+                              </div>
+                            </div>
+                            <div style={{ display: "flex", gap: 8 }}>
+                              <button
+                                className="btn-secondary"
+                                style={{ padding: "8px 10px" }}
+                                title="Edit Variant"
+                                onClick={() => {
                                   setVariantForm({ variant_label: v.variant_label, color: v.color || "", size: v.size || "", type: v.type || "", grade: v.grade || "", brand: v.brand || "", pack_size: v.pack_size || "", current_stock: String(v.current_stock), min_threshold: String(v.min_threshold) });
                                   setVariantModal({ mode: "edit", item, variant: v });
-                                }}><Edit2 size={13} /></button>
-                                {role === "admin" && (
-                                  <button className="btn-danger" style={{ padding: "5px 8px" }} onClick={() => setDeleteConfirm({ type: "variant", id: v.id })}><Trash2 size={13} /></button>
-                                )}
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                                }}
+                              >
+                                <Edit2 size={14} />
+                              </button>
+                              {role === "admin" && (
+                                <button
+                                  className="btn-danger"
+                                  style={{ padding: "8px 10px" }}
+                                  title="Delete Variant"
+                                  onClick={() => setDeleteConfirm({ type: "variant", id: v.id })}
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              )}
+                            </div>
+                          </div>
+
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 13, color: "var(--text-muted)", marginTop: 8, paddingTop: 8, borderTop: "1px dashed var(--border)" }}>
+                            <div>
+                              Current Stock: <strong style={{ color: v.current_stock === 0 ? "var(--accent-red)" : v.current_stock <= v.min_threshold ? "var(--accent-amber)" : "var(--accent-emerald)" }}>{v.current_stock} {item.unit}</strong>
+                            </div>
+                            <div>Min Alert: <strong>{v.min_threshold}</strong></div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
@@ -248,9 +332,14 @@ export default function ItemsPage() {
       {itemModal && (
         <div className="modal-overlay" onClick={() => setItemModal(null)}>
           <div className="modal-box" onClick={e => e.stopPropagation()}>
-            <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 18, fontWeight: 700, marginBottom: 24 }}>
-              {itemModal.mode === "add" ? "➕ New Item" : "✏️ Edit Item"}
-            </h2>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+              <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 18, fontWeight: 700 }}>
+                {itemModal.mode === "add" ? "➕ New Item" : "✏️ Edit Item"}
+              </h2>
+              <button onClick={() => setItemModal(null)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer", padding: 4 }}>
+                <X size={20} />
+              </button>
+            </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div className="form-group">
                 <label className="form-label">Category *</label>
@@ -287,9 +376,9 @@ export default function ItemsPage() {
                 </div>
                 <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 4 }}>Select which attributes define a variant for this item</div>
               </div>
-              <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
-                <button className="btn-secondary" onClick={() => setItemModal(null)} style={{ flex: 1 }}>Cancel</button>
-                <button className="btn-primary" onClick={saveItem} disabled={saving} style={{ flex: 2 }}>
+              <div style={{ display: "flex", gap: 12, marginTop: 12, paddingBottom: 8 }}>
+                <button className="btn-secondary" onClick={() => setItemModal(null)} style={{ flex: 1, minHeight: 44, justifyContent: "center" }}>Cancel</button>
+                <button className="btn-primary" onClick={saveItem} disabled={saving} style={{ flex: 2, minHeight: 44, justifyContent: "center" }}>
                   {saving ? <div className="spinner" /> : itemModal.mode === "add" ? "Create Item" : "Save Changes"}
                 </button>
               </div>
@@ -302,13 +391,20 @@ export default function ItemsPage() {
       {variantModal && (
         <div className="modal-overlay" onClick={() => setVariantModal(null)}>
           <div className="modal-box" onClick={e => e.stopPropagation()}>
-            <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 18, fontWeight: 700, marginBottom: 8 }}>
-              {variantModal.mode === "add" ? "➕ Add Variant" : "✏️ Edit Variant"}
-            </h2>
-            <p style={{ color: "var(--text-muted)", fontSize: 13, marginBottom: 20 }}>
-              {variantModal.item.name} — <em>Label: {autoLabel(variantForm) || "Standard"}</em>
-            </p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 8 }}>
+              <div>
+                <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 18, fontWeight: 700 }}>
+                  {variantModal.mode === "add" ? "➕ Add Variant" : "✏️ Edit Variant"}
+                </h2>
+                <p style={{ color: "var(--text-muted)", fontSize: 13, marginTop: 2 }}>
+                  {variantModal.item.name} — <em>Label: {autoLabel(variantForm) || "Standard"}</em>
+                </p>
+              </div>
+              <button onClick={() => setVariantModal(null)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer", padding: 4 }}>
+                <X size={20} />
+              </button>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(135px, 1fr))", gap: 12, marginTop: 16 }}>
               {(["color","size","type","grade","brand","pack_size"] as const).map(attr => (
                 <div key={attr} className="form-group">
                   <label className="form-label" style={{ textTransform: "capitalize" }}>{attr.replace("_", " ")}</label>
@@ -330,9 +426,9 @@ export default function ItemsPage() {
                   onChange={e => setVariantForm(f => ({ ...f, min_threshold: e.target.value }))} min={0} />
               </div>
             </div>
-            <div style={{ display: "flex", gap: 12, marginTop: 20 }}>
-              <button className="btn-secondary" onClick={() => setVariantModal(null)} style={{ flex: 1 }}>Cancel</button>
-              <button className="btn-primary" onClick={saveVariant} disabled={saving} style={{ flex: 2 }}>
+            <div style={{ display: "flex", gap: 12, marginTop: 20, paddingBottom: 10 }}>
+              <button className="btn-secondary" onClick={() => setVariantModal(null)} style={{ flex: 1, minHeight: 44, justifyContent: "center" }}>Cancel</button>
+              <button className="btn-primary" onClick={saveVariant} disabled={saving} style={{ flex: 2, minHeight: 44, justifyContent: "center" }}>
                 {saving ? <div className="spinner" /> : variantModal.mode === "add" ? "Add Variant" : "Save Changes"}
               </button>
             </div>

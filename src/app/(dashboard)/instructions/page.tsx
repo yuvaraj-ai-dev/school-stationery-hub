@@ -226,7 +226,7 @@ export default function InstructionsPage() {
             <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 12, color: "var(--text-primary)" }}>
               🔒 Teacher Access Permissions (What you can and cannot do)
             </h3>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+            <div className="grid-responsive-2" style={{ gap: 14 }}>
               <div style={{ padding: 14, borderRadius: 10, background: "rgba(52,211,153,0.06)", border: "1px solid rgba(52,211,153,0.2)" }}>
                 <div style={{ fontWeight: 700, color: "var(--accent-emerald)", fontSize: 13, marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
                   <Check size={16} /> What Teachers CAN Do:
@@ -359,96 +359,98 @@ export default function InstructionsPage() {
               Use this reference guide when adding new items so that every category is organized logically.
             </p>
 
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Category</th>
-                  <th>Item Example</th>
-                  <th>Tracked Attributes</th>
-                  <th>Example Generated Variants</th>
-                  <th>Unit</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><span className="tag tag-blue">📄 Paper & Chart</span></td>
-                  <td style={{ fontWeight: 600 }}>Chart Paper</td>
-                  <td><code>color</code>, <code>size</code></td>
-                  <td>White - Full Sheet, Yellow - Full Sheet, Light Blue - Full Sheet</td>
-                  <td>sheets</td>
-                </tr>
-                <tr>
-                  <td><span className="tag tag-blue">📄 Paper & Chart</span></td>
-                  <td style={{ fontWeight: 600 }}>Colored Craft Paper</td>
-                  <td><code>color</code>, <code>size</code></td>
-                  <td>Assorted Colors - A4, Pastel Green - A4, Neon Pink - A4</td>
-                  <td>reams / packs</td>
-                </tr>
-                <tr>
-                  <td><span className="tag tag-purple">🖍️ Drawing & Color</span></td>
-                  <td style={{ fontWeight: 600 }}>Wax Crayons</td>
-                  <td><code>brand</code>, <code>pack_size</code></td>
-                  <td>Camlin - 12 Shades, Faber-Castell - 24 Shades Jumbo</td>
-                  <td>boxes</td>
-                </tr>
-                <tr>
-                  <td><span className="tag tag-purple">🖍️ Drawing & Color</span></td>
-                  <td style={{ fontWeight: 600 }}>Poster Colors</td>
-                  <td><code>color</code>, <code>pack_size</code></td>
-                  <td>Red - 100ml, Royal Blue - 100ml, 12 Shades Set</td>
-                  <td>bottles / sets</td>
-                </tr>
-                <tr>
-                  <td><span className="tag tag-pink">🎨 Art & Craft</span></td>
-                  <td style={{ fontWeight: 600 }}>EVA Foam Sheets</td>
-                  <td><code>color</code>, <code>type</code>, <code>size</code></td>
-                  <td>Glitter Gold - Self-Adhesive - A4, Plain Multi - A4</td>
-                  <td>sheets</td>
-                </tr>
-                <tr>
-                  <td><span className="tag tag-pink">🎨 Art & Craft</span></td>
-                  <td style={{ fontWeight: 600 }}>Ice-Cream Sticks</td>
-                  <td><code>type</code>, <code>pack_size</code></td>
-                  <td>Plain Natural - 100pcs, Multi-Colored - 100pcs</td>
-                  <td>packets</td>
-                </tr>
-                <tr>
-                  <td><span className="tag tag-pink">🎨 Art & Craft</span></td>
-                  <td style={{ fontWeight: 600 }}>Googly Eyes</td>
-                  <td><code>size</code>, <code>pack_size</code></td>
-                  <td>10mm Small - 100pcs, 20mm Large - 50pcs</td>
-                  <td>packets</td>
-                </tr>
-                <tr>
-                  <td><span className="tag tag-amber">📒 General Stationery</span></td>
-                  <td style={{ fontWeight: 600 }}>Whiteboard Markers</td>
-                  <td><code>color</code>, <code>type</code></td>
-                  <td>Black - Bullet Tip, Blue - Bullet Tip, Red - Chisel Tip</td>
-                  <td>pcs</td>
-                </tr>
-                <tr>
-                  <td><span className="tag tag-amber">📒 General Stationery</span></td>
-                  <td style={{ fontWeight: 600 }}>Tapes</td>
-                  <td><code>type</code>, <code>size</code></td>
-                  <td>Masking Tape - 24mm, Cellophane Clear - 12mm</td>
-                  <td>rolls</td>
-                </tr>
-                <tr>
-                  <td><span className="tag tag-green">🧹 Cleaning & Hygiene</span></td>
-                  <td style={{ fontWeight: 600 }}>Liquid Handwash</td>
-                  <td><code>brand</code>, <code>pack_size</code></td>
-                  <td>Dettol - 500ml Pump, Lifebuoy - 5L Refill Can</td>
-                  <td>bottles / cans</td>
-                </tr>
-                <tr>
-                  <td><span className="tag tag-green">🧹 Cleaning & Hygiene</span></td>
-                  <td style={{ fontWeight: 600 }}>Tissue Paper Box</td>
-                  <td><code>pack_size</code></td>
-                  <td>100 Pulls 2-Ply, 200 Pulls Soft Box</td>
-                  <td>boxes</td>
-                </tr>
-              </tbody>
-            </table>
+            <div className="table-responsive">
+              <table className="data-table" style={{ minWidth: 640 }}>
+                <thead>
+                  <tr>
+                    <th>Category</th>
+                    <th>Item Example</th>
+                    <th>Tracked Attributes</th>
+                    <th>Example Generated Variants</th>
+                    <th>Unit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span className="tag tag-blue">📄 Paper & Chart</span></td>
+                    <td style={{ fontWeight: 600 }}>Chart Paper</td>
+                    <td><code>color</code>, <code>size</code></td>
+                    <td>White - Full Sheet, Yellow - Full Sheet, Light Blue - Full Sheet</td>
+                    <td>sheets</td>
+                  </tr>
+                  <tr>
+                    <td><span className="tag tag-blue">📄 Paper & Chart</span></td>
+                    <td style={{ fontWeight: 600 }}>Colored Craft Paper</td>
+                    <td><code>color</code>, <code>size</code></td>
+                    <td>Assorted Colors - A4, Pastel Green - A4, Neon Pink - A4</td>
+                    <td>reams / packs</td>
+                  </tr>
+                  <tr>
+                    <td><span className="tag tag-purple">🖍️ Drawing & Color</span></td>
+                    <td style={{ fontWeight: 600 }}>Wax Crayons</td>
+                    <td><code>brand</code>, <code>pack_size</code></td>
+                    <td>Camlin - 12 Shades, Faber-Castell - 24 Shades Jumbo</td>
+                    <td>boxes</td>
+                  </tr>
+                  <tr>
+                    <td><span className="tag tag-purple">🖍️ Drawing & Color</span></td>
+                    <td style={{ fontWeight: 600 }}>Poster Colors</td>
+                    <td><code>color</code>, <code>pack_size</code></td>
+                    <td>Red - 100ml, Royal Blue - 100ml, 12 Shades Set</td>
+                    <td>bottles / sets</td>
+                  </tr>
+                  <tr>
+                    <td><span className="tag tag-pink">🎨 Art & Craft</span></td>
+                    <td style={{ fontWeight: 600 }}>EVA Foam Sheets</td>
+                    <td><code>color</code>, <code>type</code>, <code>size</code></td>
+                    <td>Glitter Gold - Self-Adhesive - A4, Plain Multi - A4</td>
+                    <td>sheets</td>
+                  </tr>
+                  <tr>
+                    <td><span className="tag tag-pink">🎨 Art & Craft</span></td>
+                    <td style={{ fontWeight: 600 }}>Ice-Cream Sticks</td>
+                    <td><code>type</code>, <code>pack_size</code></td>
+                    <td>Plain Natural - 100pcs, Multi-Colored - 100pcs</td>
+                    <td>packets</td>
+                  </tr>
+                  <tr>
+                    <td><span className="tag tag-pink">🎨 Art & Craft</span></td>
+                    <td style={{ fontWeight: 600 }}>Googly Eyes</td>
+                    <td><code>size</code>, <code>pack_size</code></td>
+                    <td>10mm Small - 100pcs, 20mm Large - 50pcs</td>
+                    <td>packets</td>
+                  </tr>
+                  <tr>
+                    <td><span className="tag tag-amber">📒 General Stationery</span></td>
+                    <td style={{ fontWeight: 600 }}>Whiteboard Markers</td>
+                    <td><code>color</code>, <code>type</code></td>
+                    <td>Black - Bullet Tip, Blue - Bullet Tip, Red - Chisel Tip</td>
+                    <td>pcs</td>
+                  </tr>
+                  <tr>
+                    <td><span className="tag tag-amber">📒 General Stationery</span></td>
+                    <td style={{ fontWeight: 600 }}>Tapes</td>
+                    <td><code>type</code>, <code>size</code></td>
+                    <td>Masking Tape - 24mm, Cellophane Clear - 12mm</td>
+                    <td>rolls</td>
+                  </tr>
+                  <tr>
+                    <td><span className="tag tag-green">🧹 Cleaning & Hygiene</span></td>
+                    <td style={{ fontWeight: 600 }}>Liquid Handwash</td>
+                    <td><code>brand</code>, <code>pack_size</code></td>
+                    <td>Dettol - 500ml Pump, Lifebuoy - 5L Refill Can</td>
+                    <td>bottles / cans</td>
+                  </tr>
+                  <tr>
+                    <td><span className="tag tag-green">🧹 Cleaning & Hygiene</span></td>
+                    <td style={{ fontWeight: 600 }}>Tissue Paper Box</td>
+                    <td><code>pack_size</code></td>
+                    <td>100 Pulls 2-Ply, 200 Pulls Soft Box</td>
+                    <td>boxes</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
@@ -461,7 +463,7 @@ export default function InstructionsPage() {
               ✅ Data Entry Rules: Mandatory vs Optional
             </h2>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <div className="grid-responsive-2" style={{ gap: 16 }}>
               {/* Mandatory */}
               <div style={{
                 background: "var(--bg-secondary)",

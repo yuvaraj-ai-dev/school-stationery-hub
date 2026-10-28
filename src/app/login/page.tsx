@@ -19,6 +19,7 @@ export default function LoginPage() {
       background: "var(--bg-primary)",
       position: "relative",
       overflow: "hidden",
+      padding: "20px 16px",
     }}>
       {/* Ambient blobs */}
       <div style={{

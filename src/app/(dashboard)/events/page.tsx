@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { AppEvent, StockLog } from "@/types";
 import toast from "react-hot-toast";
-import { Plus, Edit2, Trash2, Calendar, Package } from "lucide-react";
+import { Plus, Edit2, Trash2, Calendar, Package, X } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
 export default function EventsPage() {
@@ -78,7 +78,7 @@ export default function EventsPage() {
       {loading ? (
         <div style={{ display: "flex", justifyContent: "center", padding: 60 }}><div className="spinner" style={{ width: 40, height: 40 }} /></div>
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: selected ? "380px 1fr" : "1fr", gap: 20 }}>
+        <div className={selected ? "grid-responsive-2" : ""} style={{ gap: 20 }}>
           {/* Events list */}
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {events.length === 0 ? (
@@ -153,30 +153,32 @@ export default function EventsPage() {
                   <div className="empty-state-desc">When you use stock and select this event, it will appear here.</div>
                 </div>
               ) : (
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Item</th>
-                      <th>Variant</th>
-                      <th>Qty Used</th>
-                      <th>Logged By</th>
-                      <th>Date</th>
-                      <th>Notes</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {eventLogs.map(log => (
-                      <tr key={log.id}>
-                        <td style={{ fontWeight: 600, color: "var(--text-primary)" }}>{log.item_name}</td>
-                        <td><span className="tag tag-blue">{log.variant_label}</span></td>
-                        <td style={{ fontWeight: 700, color: "#f87171" }}>-{log.quantity}</td>
-                        <td>{log.used_by_name}</td>
-                        <td style={{ fontSize: 12 }}>{formatDate(log.created_at)}</td>
-                        <td style={{ fontSize: 12, color: "var(--text-muted)" }}>{log.notes || "-"}</td>
+                <div className="table-responsive">
+                  <table className="data-table" style={{ minWidth: 540 }}>
+                    <thead>
+                      <tr>
+                        <th>Item</th>
+                        <th>Variant</th>
+                        <th>Qty Used</th>
+                        <th>Logged By</th>
+                        <th>Date</th>
+                        <th>Notes</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {eventLogs.map(log => (
+                        <tr key={log.id}>
+                          <td style={{ fontWeight: 600, color: "var(--text-primary)" }}>{log.item_name}</td>
+                          <td><span className="tag tag-blue">{log.variant_label}</span></td>
+                          <td style={{ fontWeight: 700, color: "#f87171" }}>-{log.quantity}</td>
+                          <td>{log.used_by_name}</td>
+                          <td style={{ fontSize: 12 }}>{formatDate(log.created_at)}</td>
+                          <td style={{ fontSize: 12, color: "var(--text-muted)" }}>{log.notes || "-"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
           )}
@@ -187,9 +189,14 @@ export default function EventsPage() {
       {modal && (
         <div className="modal-overlay" onClick={() => setModal(null)}>
           <div className="modal-box" onClick={e => e.stopPropagation()}>
-            <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 18, fontWeight: 700, marginBottom: 24 }}>
-              {modal.mode === "add" ? "🎉 New Event" : "✏️ Edit Event"}
-            </h2>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+              <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 18, fontWeight: 700 }}>
+                {modal.mode === "add" ? "🎉 New Event" : "✏️ Edit Event"}
+              </h2>
+              <button onClick={() => setModal(null)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer", padding: 4 }}>
+                <X size={20} />
+              </button>
+            </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div className="form-group">
                 <label className="form-label">Event Name *</label>
@@ -204,9 +211,9 @@ export default function EventsPage() {
                 <textarea className="input-base" placeholder="Brief description..." value={form.description}
                   onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={3} style={{ resize: "vertical" }} />
               </div>
-              <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
-                <button className="btn-secondary" onClick={() => setModal(null)} style={{ flex: 1 }}>Cancel</button>
-                <button className="btn-primary" onClick={saveEvent} disabled={saving} style={{ flex: 2 }}>
+              <div style={{ display: "flex", gap: 12, marginTop: 12, paddingBottom: 8 }}>
+                <button className="btn-secondary" onClick={() => setModal(null)} style={{ flex: 1, minHeight: 44, justifyContent: "center" }}>Cancel</button>
+                <button className="btn-primary" onClick={saveEvent} disabled={saving} style={{ flex: 2, minHeight: 44, justifyContent: "center" }}>
                   {saving ? <div className="spinner" /> : modal.mode === "add" ? "Create Event" : "Save Changes"}
                 </button>
               </div>

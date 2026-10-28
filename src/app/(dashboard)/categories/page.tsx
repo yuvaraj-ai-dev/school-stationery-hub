@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { Category } from "@/types";
 import toast from "react-hot-toast";
-import { Plus, Edit2, Trash2, Search } from "lucide-react";
+import { Plus, Edit2, Trash2, Search, X } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
 const ICONS = ["📄","🖍️","🎨","📒","🧹","✏️","📏","🖌️","📌","🗂️","📎","✂️","🧴","🧻"];
@@ -119,9 +119,14 @@ export default function CategoriesPage() {
       {modal && (
         <div className="modal-overlay" onClick={() => setModal(null)}>
           <div className="modal-box" onClick={e => e.stopPropagation()}>
-            <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 18, fontWeight: 700, marginBottom: 24 }}>
-              {modal.mode === "add" ? "➕ New Category" : "✏️ Edit Category"}
-            </h2>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+              <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 18, fontWeight: 700 }}>
+                {modal.mode === "add" ? "➕ New Category" : "✏️ Edit Category"}
+              </h2>
+              <button onClick={() => setModal(null)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer", padding: 4 }}>
+                <X size={20} />
+              </button>
+            </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div className="form-group">
                 <label className="form-label">Icon</label>
@@ -149,9 +154,9 @@ export default function CategoriesPage() {
                 <textarea className="input-base" placeholder="Short description..." value={form.description}
                   onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={3} style={{ resize: "vertical" }} />
               </div>
-              <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
-                <button className="btn-secondary" onClick={() => setModal(null)} style={{ flex: 1 }}>Cancel</button>
-                <button className="btn-primary" onClick={handleSave} disabled={saving} style={{ flex: 2 }}>
+              <div style={{ display: "flex", gap: 12, marginTop: 12, paddingBottom: 8 }}>
+                <button className="btn-secondary" onClick={() => setModal(null)} style={{ flex: 1, minHeight: 44, justifyContent: "center" }}>Cancel</button>
+                <button className="btn-primary" onClick={handleSave} disabled={saving} style={{ flex: 2, minHeight: 44, justifyContent: "center" }}>
                   {saving ? <div className="spinner" /> : modal.mode === "add" ? "Create Category" : "Save Changes"}
                 </button>
               </div>

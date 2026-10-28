@@ -94,54 +94,111 @@ export default function LogsPage() {
         <div style={{ display: "flex", justifyContent: "center", padding: 60 }}><div className="spinner" style={{ width: 40, height: 40 }} /></div>
       ) : (
         <div className="glass-card" style={{ overflow: "hidden" }}>
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Date & Time</th>
-                <th>Item</th>
-                <th>Variant</th>
-                <th>Action</th>
-                <th>Qty</th>
-                <th>Before → After</th>
-                <th>Logged By</th>
-                <th>Event</th>
-                <th>Notes</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.length === 0 ? (
-                <tr><td colSpan={9} style={{ textAlign: "center", padding: 48, color: "var(--text-muted)" }}>No logs found matching your filters</td></tr>
-              ) : filtered.map(log => (
-                <tr key={log.id}>
-                  <td style={{ fontSize: 12, whiteSpace: "nowrap" }}>{formatDateTime(log.created_at)}</td>
-                  <td style={{ fontWeight: 600, color: "var(--text-primary)" }}>{log.item_name}</td>
-                  <td><span className="tag tag-blue">{log.variant_label}</span></td>
-                  <td>
-                    <span style={{
-                      display: "inline-flex", alignItems: "center", gap: 5,
-                      padding: "3px 10px", borderRadius: 99, fontSize: 12, fontWeight: 600,
-                      background: log.action_type === "add" ? "rgba(52,211,153,0.1)" : "rgba(248,113,113,0.1)",
-                      color: log.action_type === "add" ? "#34d399" : "#f87171",
-                    }}>
-                      {log.action_type === "add" ? <ArrowUp size={12} /> : <ArrowDown size={12} />}
-                      {log.action_type === "add" ? "Added" : "Used"}
-                    </span>
-                  </td>
-                  <td style={{ fontWeight: 700, color: log.action_type === "add" ? "#34d399" : "#f87171" }}>
-                    {log.action_type === "add" ? "+" : "-"}{log.quantity}
-                  </td>
-                  <td style={{ fontSize: 12, color: "var(--text-muted)" }}>
-                    {log.stock_before} → <strong style={{ color: "var(--text-primary)" }}>{log.stock_after}</strong>
-                  </td>
-                  <td style={{ fontSize: 13 }}>{log.used_by_name}</td>
-                  <td>{log.event ? <span className="tag tag-purple">{log.event}</span> : "-"}</td>
-                  <td style={{ fontSize: 12, color: "var(--text-muted)", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {log.notes || "-"}
-                  </td>
+          {/* Desktop Table View */}
+          <div className="desktop-table table-responsive">
+            <table className="data-table" style={{ minWidth: 800 }}>
+              <thead>
+                <tr>
+                  <th>Date & Time</th>
+                  <th>Item</th>
+                  <th>Variant</th>
+                  <th>Action</th>
+                  <th>Qty</th>
+                  <th>Before → After</th>
+                  <th>Logged By</th>
+                  <th>Event</th>
+                  <th>Notes</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filtered.length === 0 ? (
+                  <tr><td colSpan={9} style={{ textAlign: "center", padding: 48, color: "var(--text-muted)" }}>No logs found matching your filters</td></tr>
+                ) : filtered.map(log => (
+                  <tr key={log.id}>
+                    <td style={{ fontSize: 12, whiteSpace: "nowrap" }}>{formatDateTime(log.created_at)}</td>
+                    <td style={{ fontWeight: 600, color: "var(--text-primary)" }}>{log.item_name}</td>
+                    <td><span className="tag tag-blue">{log.variant_label}</span></td>
+                    <td>
+                      <span style={{
+                        display: "inline-flex", alignItems: "center", gap: 5,
+                        padding: "3px 10px", borderRadius: 99, fontSize: 12, fontWeight: 600,
+                        background: log.action_type === "add" ? "rgba(52,211,153,0.1)" : "rgba(248,113,113,0.1)",
+                        color: log.action_type === "add" ? "#34d399" : "#f87171",
+                      }}>
+                        {log.action_type === "add" ? <ArrowUp size={12} /> : <ArrowDown size={12} />}
+                        {log.action_type === "add" ? "Added" : "Used"}
+                      </span>
+                    </td>
+                    <td style={{ fontWeight: 700, color: log.action_type === "add" ? "#34d399" : "#f87171" }}>
+                      {log.action_type === "add" ? "+" : "-"}{log.quantity}
+                    </td>
+                    <td style={{ fontSize: 12, color: "var(--text-muted)" }}>
+                      {log.stock_before} → <strong style={{ color: "var(--text-primary)" }}>{log.stock_after}</strong>
+                    </td>
+                    <td style={{ fontSize: 13 }}>{log.used_by_name}</td>
+                    <td>{log.event ? <span className="tag tag-purple">{log.event}</span> : "-"}</td>
+                    <td style={{ fontSize: 12, color: "var(--text-muted)", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {log.notes || "-"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Vertical Cards View */}
+          <div className="mobile-card-list" style={{ padding: 12 }}>
+            {filtered.length === 0 ? (
+              <div style={{ textAlign: "center", padding: 32, color: "var(--text-muted)", fontSize: 14 }}>No logs found matching your filters</div>
+            ) : filtered.map(log => (
+              <div
+                key={log.id}
+                style={{
+                  background: "var(--bg-secondary)",
+                  border: "1px solid var(--border)",
+                  borderRadius: 14,
+                  padding: "14px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <span style={{
+                    display: "inline-flex", alignItems: "center", gap: 5,
+                    padding: "3px 10px", borderRadius: 99, fontSize: 12, fontWeight: 700,
+                    background: log.action_type === "add" ? "rgba(52,211,153,0.12)" : "rgba(248,113,113,0.12)",
+                    color: log.action_type === "add" ? "#34d399" : "#f87171",
+                  }}>
+                    {log.action_type === "add" ? <ArrowUp size={13} /> : <ArrowDown size={13} />}
+                    {log.action_type === "add" ? `Added +${log.quantity}` : `Used -${log.quantity}`}
+                  </span>
+                  <span style={{ fontSize: 11, color: "var(--text-muted)" }}>
+                    {formatDateTime(log.created_at)}
+                  </span>
+                </div>
+
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: "var(--text-primary)" }}>{log.item_name}</div>
+                  <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 2 }}>
+                    Variant: <span className="tag tag-blue" style={{ fontSize: 11, padding: "2px 8px" }}>{log.variant_label}</span>
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12, color: "var(--text-muted)", paddingTop: 8, borderTop: "1px dashed var(--border)" }}>
+                  <div>Logged By: <strong style={{ color: "var(--text-primary)" }}>{log.used_by_name}</strong></div>
+                  <div>Stock: {log.stock_before} → <strong style={{ color: "var(--text-primary)" }}>{log.stock_after}</strong></div>
+                </div>
+
+                {(log.event || log.notes) && (
+                  <div style={{ fontSize: 12, color: "var(--text-muted)", background: "var(--bg-card)", padding: "8px 10px", borderRadius: 8, marginTop: 2 }}>
+                    {log.event && <span className="tag tag-purple" style={{ marginRight: 6, fontSize: 11 }}>🎉 {log.event}</span>}
+                    {log.notes && <span>{log.notes}</span>}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

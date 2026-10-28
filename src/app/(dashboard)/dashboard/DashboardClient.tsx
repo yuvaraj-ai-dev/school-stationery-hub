@@ -65,10 +65,10 @@ export default function DashboardClient({ user, stats, lowStockVariants, outOfSt
   return (
     <div className="page-content">
       {/* Header */}
-      <div style={{ marginBottom: 32 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
           <div>
-            <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 26, fontWeight: 800, color: "var(--text-primary)", marginBottom: 4 }}>
+            <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 24, fontWeight: 800, color: "var(--text-primary)", marginBottom: 4 }}>
               {greeting}, {user?.name?.split(" ")[0]} 👋
             </h1>
             <p style={{ color: "var(--text-muted)", fontSize: 14 }}>
@@ -76,7 +76,7 @@ export default function DashboardClient({ user, stats, lowStockVariants, outOfSt
             </p>
           </div>
           <div style={{
-            padding: "8px 16px", borderRadius: 99, fontSize: 12, fontWeight: 600,
+            padding: "6px 14px", borderRadius: 99, fontSize: 12, fontWeight: 600,
             background: user?.role === "admin" ? "rgba(108,143,255,0.12)" : "rgba(52,211,153,0.12)",
             color: user?.role === "admin" ? "var(--accent-primary)" : "var(--accent-emerald)",
             border: user?.role === "admin" ? "1px solid rgba(108,143,255,0.25)" : "1px solid rgba(52,211,153,0.25)",
@@ -88,8 +88,8 @@ export default function DashboardClient({ user, stats, lowStockVariants, outOfSt
       </div>
 
       {/* Stat Cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 28 }}>
-        <StatCard icon={<Package size={20} />} label="Total Items" value={stats.totalItems} sub={`${stats.totalVariants} variants tracked`} color="#6c8fff" />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12, marginBottom: 24 }}>
+        <StatCard icon={<Package size={20} />} label="Total Items" value={stats.totalItems} sub={`${stats.totalVariants} variants`} color="#6c8fff" />
         <StatCard icon={<Tag size={20} />} label="Categories" value={stats.totalCategories} sub="active categories" color="#a78bfa" />
         <StatCard icon={<TrendingUp size={20} />} label="Used This Month" value={stats.usageThisMonth} sub="units consumed" color="#34d399" />
         <StatCard icon={<AlertTriangle size={20} />} label="Low Stock" value={stats.lowStockCount} sub="need restocking" color="#fbbf24" />
@@ -97,7 +97,7 @@ export default function DashboardClient({ user, stats, lowStockVariants, outOfSt
       </div>
 
       {/* Charts Row */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 380px", gap: 20, marginBottom: 20 }}>
+      <div className="grid-charts" style={{ marginBottom: 20 }}>
         {/* Bar Chart */}
         <div className="glass-card" style={{ padding: 24 }}>
           <div className="section-header">
@@ -155,7 +155,7 @@ export default function DashboardClient({ user, stats, lowStockVariants, outOfSt
       </div>
 
       {/* Bottom Row: Alerts + Recent Activity */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+      <div className="grid-responsive-2" style={{ gap: 20 }}>
         {/* Alerts */}
         <div className="glass-card" style={{ padding: 24 }}>
           <div className="section-header">

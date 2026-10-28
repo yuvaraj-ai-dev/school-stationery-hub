@@ -5,7 +5,7 @@ import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import {
   LayoutDashboard, Package, Tag, List, ClipboardList,
-  CalendarHeart, Settings, LogOut, ChevronRight, Bell, BookOpen,
+  CalendarHeart, Settings, LogOut, ChevronRight, BookOpen, X,
 } from "lucide-react";
 
 const navItems = [
@@ -22,32 +22,30 @@ const adminItems = [
   { href: "/settings", icon: Settings, label: "Settings" },
 ];
 
-export default function Sidebar() {
+interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const { data: session } = useSession();
   const isAdmin = session?.user?.role === "admin";
 
+  const handleLinkClick = () => {
+    if (onClose) onClose();
+  };
+
   return (
-    <aside style={{
-      width: "var(--sidebar-width)",
-      minWidth: "var(--sidebar-width)",
-      height: "100vh",
-      background: "var(--bg-secondary)",
-      borderRight: "1px solid var(--border)",
-      display: "flex",
-      flexDirection: "column",
-      position: "sticky",
-      top: 0,
-      overflow: "hidden",
-    }}>
-      {/* Logo */}
-      <div style={{ padding: "24px 20px 20px", borderBottom: "1px solid var(--border)" }}>
+    <aside className={`sidebar-container ${isOpen ? "open" : ""}`}>
+      {/* Logo & Close button */}
+      <div style={{ padding: "20px 18px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <div style={{
-            width: 40, height: 40, borderRadius: 12,
+            width: 38, height: 38, borderRadius: 10,
             background: "var(--gradient-1)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 20, boxShadow: "0 4px 16px rgba(108,143,255,0.3)",
+            fontSize: 18, boxShadow: "0 4px 16px rgba(108,143,255,0.3)",
             flexShrink: 0,
           }}>
             📦
@@ -59,18 +57,44 @@ export default function Sidebar() {
             <div style={{ fontSize: 11, color: "var(--text-muted)" }}>Preschool Manager</div>
           </div>
         </div>
+
+        {/* Mobile close button */}
+        {onClose && (
+          <button
+            onClick={onClose}
+            aria-label="Close menu"
+            style={{
+              background: "none",
+              border: "none",
+              color: "var(--text-muted)",
+              cursor: "pointer",
+              padding: 6,
+              borderRadius: 8,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <X size={20} />
+          </button>
+        )}
       </div>
 
-      {/* Nav */}
+      {/* Nav links */}
       <nav style={{ flex: 1, padding: "16px 12px", overflowY: "auto", display: "flex", flexDirection: "column", gap: 2 }}>
         <div style={{ fontSize: 10, fontWeight: 700, color: "var(--text-muted)", letterSpacing: "0.1em", textTransform: "uppercase", padding: "4px 6px 8px" }}>
           Main Menu
         </div>
         {navItems.map((item) => {
           const Icon = item.icon;
-          const active = pathname === item.href || pathname.startsWith(item.href + "/");
+          const active = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href + "/"));
           return (
-            <Link key={item.href} href={item.href} className={`nav-item ${active ? "active" : ""}`}>
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={handleLinkClick}
+              className={`nav-item ${active ? "active" : ""}`}
+            >
               <Icon size={18} strokeWidth={active ? 2.5 : 2} />
               <span style={{ flex: 1 }}>{item.label}</span>
               {active && <ChevronRight size={14} />}
@@ -78,20 +102,29 @@ export default function Sidebar() {
           );
         })}
 
-        <div style={{ fontSize: 10, fontWeight: 700, color: "var(--text-muted)", letterSpacing: "0.1em", textTransform: "uppercase", padding: "16px 6px 8px" }}>
-          Admin
-        </div>
-        {adminItems.map((item) => {
-          const Icon = item.icon;
-          const active = pathname === item.href;
-          return (
-            <Link key={item.href} href={item.href} className={`nav-item ${active ? "active" : ""}`}>
-              <Icon size={18} strokeWidth={active ? 2.5 : 2} />
-              <span style={{ flex: 1 }}>{item.label}</span>
-              {active && <ChevronRight size={14} />}
-            </Link>
-          );
-        })}
+        {isAdmin && (
+          <>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "var(--text-muted)", letterSpacing: "0.1em", textTransform: "uppercase", padding: "16px 6px 8px" }}>
+              Admin
+            </div>
+            {adminItems.map((item) => {
+              const Icon = item.icon;
+              const active = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={handleLinkClick}
+                  className={`nav-item ${active ? "active" : ""}`}
+                >
+                  <Icon size={18} strokeWidth={active ? 2.5 : 2} />
+                  <span style={{ flex: 1 }}>{item.label}</span>
+                  {active && <ChevronRight size={14} />}
+                </Link>
+              );
+            })}
+          </>
+        )}
       </nav>
 
       {/* User profile */}
@@ -104,14 +137,14 @@ export default function Sidebar() {
                 <img
                   src={session.user.image}
                   alt={session.user.name || ""}
-                  style={{ width: 36, height: 36, borderRadius: "50%", border: "2px solid var(--border-light)" }}
+                  style={{ width: 34, height: 34, borderRadius: "50%", border: "2px solid var(--border-light)" }}
                 />
               ) : (
                 <div style={{
-                  width: 36, height: 36, borderRadius: "50%",
+                  width: 34, height: 34, borderRadius: "50%",
                   background: "var(--gradient-1)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 14, fontWeight: 700, color: "white",
+                  fontSize: 13, fontWeight: 700, color: "white",
                 }}>
                   {session.user.name?.[0] || "?"}
                 </div>
@@ -120,7 +153,7 @@ export default function Sidebar() {
                 <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text-primary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {session.user.name}
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 2 }}>
                   <span style={{
                     fontSize: 10, fontWeight: 600, padding: "1px 7px", borderRadius: 99,
                     background: isAdmin ? "rgba(108,143,255,0.15)" : "rgba(52,211,153,0.12)",
