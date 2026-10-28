@@ -1,4 +1,4 @@
-import { readSheet, appendRow, updateRow, deleteRow } from "./google-sheets";
+import { readSheet, appendRow, appendRows, updateRow, deleteRow } from "./google-sheets";
 import { Category, Item, ItemVariant, StockLog, AppEvent, AppUser } from "@/types";
 import { v4 as uuidv4 } from "uuid";
 
@@ -239,6 +239,18 @@ export async function createStockLog(data: Omit<StockLog, "id">): Promise<StockL
     log.used_by_email, log.used_by_name, log.event || "", log.notes || "", log.created_at,
   ]);
   return log;
+}
+
+export async function createStockLogs(dataList: Omit<StockLog, "id">[]): Promise<StockLog[]> {
+  if (dataList.length === 0) return [];
+  const logs: StockLog[] = dataList.map(data => ({ id: uuidv4(), ...data }));
+  const rows = logs.map(log => [
+    log.id, log.item_id, log.variant_id, log.item_name, log.variant_label,
+    log.action_type, log.quantity, log.stock_before, log.stock_after,
+    log.used_by_email, log.used_by_name, log.event || "", log.notes || "", log.created_at,
+  ]);
+  await appendRows("stock_logs", rows);
+  return logs;
 }
 
 // ─── EVENTS ────────────────────────────────────────────────────────────────────

@@ -755,3 +755,78 @@ body {
     font-size: 13px;
   }
 }
+
+/* Bulk & Quick Modal Box */
+.bulk-modal-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 680px;
+  max-height: 90dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+  position: relative;
+  margin: auto;
+}
+
+@media (max-width: 768px) {
+  .bulk-modal-box {
+    max-height: 94dvh;
+    border-radius: 18px;
+    padding: 0 !important;
+  }
+}
+
+/* Touch-friendly Stepper Buttons */
+.stepper-btn {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+.stepper-btn:hover:not(:disabled) {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-primary);
+}
+.stepper-btn:active:not(:disabled) {
+  transform: scale(0.92);
+}
+.stepper-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Quick Quantity Chips */
+.quick-qty-chip {
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+  touch-action: manipulation;
+}
+.quick-qty-chip:hover, .quick-qty-chip:active {
+  border-color: var(--accent-primary);
+  color: var(--text-primary);
+  background: rgba(108, 143, 255, 0.12);
+}

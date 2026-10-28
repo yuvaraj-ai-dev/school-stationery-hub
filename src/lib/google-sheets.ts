@@ -41,6 +41,17 @@ export async function appendRow(sheet: string, values: (string | number | boolea
   });
 }
 
+export async function appendRows(sheet: string, rows: (string | number | boolean)[][]): Promise<void> {
+  if (!rows || rows.length === 0) return;
+  const sheets = await getSheets();
+  await sheets.spreadsheets.values.append({
+    spreadsheetId: SHEET_ID,
+    range: `${sheet}!A1`,
+    valueInputOption: "USER_ENTERED",
+    requestBody: { values: rows },
+  });
+}
+
 export async function updateRow(
   sheet: string,
   rowIndex: number, // 1-based (row 1 = header)
