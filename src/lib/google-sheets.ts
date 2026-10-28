@@ -117,6 +117,25 @@ export async function initializeSheets(): Promise<void> {
     },
     { title: "events", headers: ["id", "name", "date", "description", "created_by", "created_at"] },
     { title: "users", headers: ["email", "name", "role", "profile_image", "last_login", "created_at"] },
+    {
+      title: "hiring_candidates",
+      headers: [
+        "id",
+        "candidate_name",
+        "phone",
+        "role_type",
+        "status",
+        "call_date",
+        "interview_date",
+        "experience",
+        "location",
+        "expected_salary",
+        "notes",
+        "created_by",
+        "created_at",
+        "updated_at",
+      ],
+    },
   ];
 
   for (const s of requiredSheets) {
@@ -129,5 +148,21 @@ export async function initializeSheets(): Promise<void> {
       });
       await appendRow(s.title, s.headers);
     }
+  }
+}
+
+export async function ensureSheetExists(title: string, headers: string[]): Promise<void> {
+  const sheets = await getSheets();
+  const meta = await sheets.spreadsheets.get({ spreadsheetId: SHEET_ID });
+  const existingSheets = meta.data.sheets?.map((s) => s.properties?.title) || [];
+
+  if (!existingSheets.includes(title)) {
+    await sheets.spreadsheets.batchUpdate({
+      spreadsheetId: SHEET_ID,
+      requestBody: {
+        requests: [{ addSheet: { properties: { title } } }],
+      },
+    });
+    await appendRow(title, headers);
   }
 }

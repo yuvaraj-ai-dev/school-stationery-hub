@@ -5,7 +5,7 @@ import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import {
   LayoutDashboard, Package, Tag, List, ClipboardList,
-  CalendarHeart, Settings, LogOut, ChevronRight, BookOpen, X,
+  CalendarHeart, Settings, LogOut, ChevronRight, BookOpen, X, UserCheck,
 } from "lucide-react";
 
 const navItems = [
@@ -19,6 +19,7 @@ const navItems = [
 ];
 
 const adminItems = [
+  { href: "/hiring", icon: UserCheck, label: "Hiring & Calls" },
   { href: "/settings", icon: Settings, label: "Settings" },
 ];
 

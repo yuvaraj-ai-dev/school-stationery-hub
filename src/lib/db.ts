@@ -1,5 +1,5 @@
-import { readSheet, appendRow, appendRows, updateRow, deleteRow } from "./google-sheets";
-import { Category, Item, ItemVariant, StockLog, AppEvent, AppUser } from "@/types";
+import { readSheet, appendRow, appendRows, updateRow, deleteRow, ensureSheetExists } from "./google-sheets";
+import { Category, Item, ItemVariant, StockLog, AppEvent, AppUser, HiringCandidate, CandidateRole, CandidateStatus } from "@/types";
 import { v4 as uuidv4 } from "uuid";
 
 const now = () => new Date().toISOString();
@@ -285,4 +285,130 @@ export async function deleteEvent(id: string): Promise<void> {
   const idx = rows.findIndex((r) => r[0] === id);
   if (idx === -1) throw new Error("Event not found");
   await deleteRow("events", idx + 1);
+}
+
+// ─── HIRING CANDIDATES ─────────────────────────────────────────────────────────
+
+const HIRING_HEADERS = [
+  "id",
+  "candidate_name",
+  "phone",
+  "role_type",
+  "status",
+  "call_date",
+  "interview_date",
+  "experience",
+  "location",
+  "expected_salary",
+  "notes",
+  "created_by",
+  "created_at",
+  "updated_at",
+];
+
+export async function getHiringCandidates(): Promise<HiringCandidate[]> {
+  await ensureSheetExists("hiring_candidates", HIRING_HEADERS);
+  const rows = await readSheet("hiring_candidates!A2:N2000");
+  return rows.map((r) => ({
+    id: r[0],
+    candidate_name: r[1] || "",
+    phone: r[2] || "",
+    role_type: (r[3] as CandidateRole) || "teacher",
+    status: (r[4] as CandidateStatus) || "inquiry",
+    call_date: r[5] || "",
+    interview_date: r[6] || "",
+    experience: r[7] || "",
+    location: r[8] || "",
+    expected_salary: r[9] || "",
+    notes: r[10] || "",
+    created_by: r[11] || "",
+    created_at: r[12] || now(),
+    updated_at: r[13] || now(),
+  }));
+}
+
+export async function createHiringCandidate(
+  data: Omit<HiringCandidate, "id" | "created_at" | "updated_at">
+): Promise<HiringCandidate> {
+  await ensureSheetExists("hiring_candidates", HIRING_HEADERS);
+  const candidate: HiringCandidate = {
+    id: uuidv4(),
+    ...data,
+    created_at: now(),
+    updated_at: now(),
+  };
+
+  await appendRow("hiring_candidates", [
+    candidate.id,
+    candidate.candidate_name,
+    candidate.phone,
+    candidate.role_type,
+    candidate.status,
+    candidate.call_date || now().slice(0, 10),
+    candidate.interview_date || "",
+    candidate.experience || "",
+    candidate.location || "",
+    candidate.expected_salary || "",
+    candidate.notes || "",
+    candidate.created_by || "",
+    candidate.created_at,
+    candidate.updated_at,
+  ]);
+
+  return candidate;
+}
+
+export async function updateHiringCandidate(
+  id: string,
+  data: Partial<Omit<HiringCandidate, "id" | "created_at">>
+): Promise<HiringCandidate> {
+  await ensureSheetExists("hiring_candidates", HIRING_HEADERS);
+  const rows = await readSheet("hiring_candidates!A2:N2000");
+  const idx = rows.findIndex((r) => r[0] === id);
+  if (idx === -1) throw new Error("Candidate not found");
+
+  const row = rows[idx];
+  const updatedCandidate: HiringCandidate = {
+    id: row[0],
+    candidate_name: data.candidate_name !== undefined ? data.candidate_name : (row[1] || ""),
+    phone: data.phone !== undefined ? data.phone : (row[2] || ""),
+    role_type: data.role_type !== undefined ? data.role_type : ((row[3] as CandidateRole) || "teacher"),
+    status: data.status !== undefined ? data.status : ((row[4] as CandidateStatus) || "inquiry"),
+    call_date: data.call_date !== undefined ? data.call_date : (row[5] || ""),
+    interview_date: data.interview_date !== undefined ? data.interview_date : (row[6] || ""),
+    experience: data.experience !== undefined ? data.experience : (row[7] || ""),
+    location: data.location !== undefined ? data.location : (row[8] || ""),
+    expected_salary: data.expected_salary !== undefined ? data.expected_salary : (row[9] || ""),
+    notes: data.notes !== undefined ? data.notes : (row[10] || ""),
+    created_by: row[11] || "",
+    created_at: row[12] || now(),
+    updated_at: now(),
+  };
+
+  await updateRow("hiring_candidates", idx + 1, [
+    updatedCandidate.id,
+    updatedCandidate.candidate_name,
+    updatedCandidate.phone,
+    updatedCandidate.role_type,
+    updatedCandidate.status,
+    updatedCandidate.call_date,
+    updatedCandidate.interview_date || "",
+    updatedCandidate.experience || "",
+    updatedCandidate.location || "",
+    updatedCandidate.expected_salary || "",
+    updatedCandidate.notes || "",
+    updatedCandidate.created_by || "",
+    updatedCandidate.created_at,
+    updatedCandidate.updated_at,
+  ]);
+
+  return updatedCandidate;
+}
+
+export async function deleteHiringCandidate(id: string): Promise<void> {
+  await ensureSheetExists("hiring_candidates", HIRING_HEADERS);
+  const rows = await readSheet("hiring_candidates!A2:N2000");
+  const idx = rows.findIndex((r) => r[0] === id);
+  if (idx === -1) throw new Error("Candidate not found");
+  await deleteRow("hiring_candidates", idx + 1);
 }

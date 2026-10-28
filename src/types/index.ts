@@ -90,3 +90,33 @@ export interface DashboardStats {
   totalCategories: number;
   usageThisMonth: number;
 }
+
+// ─── HIRING & RECRUITMENT ──────────────────────────────────────────────────────
+
+export type CandidateRole = "teacher" | "ayyamma" | "other";
+
+export type CandidateStatus =
+  | "inquiry"
+  | "interview_scheduled"
+  | "interview_done"
+  | "selected"
+  | "joined"
+  | "rejected"
+  | "dropped";
+
+export interface HiringCandidate {
+  id: string;
+  candidate_name: string;
+  phone: string;
+  role_type: CandidateRole;
+  status: CandidateStatus;
+  call_date: string;
+  interview_date?: string;
+  experience?: string;
+  location?: string;
+  expected_salary?: string;
+  notes?: string;
+  created_by?: string;
+  created_at: string;
+  updated_at: string;
+}
